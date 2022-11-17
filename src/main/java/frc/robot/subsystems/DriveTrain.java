@@ -13,7 +13,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -21,14 +23,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
 
+  public static final Mk4iSwerveModuleHelper.GearRatio motorRatio = Mk4iSwerveModuleHelper.GearRatio.L1;
+
   public static final double maxVoltage = 12.0;
 
-  public static final double maxVelocityMetersPerSecond = 5880.0/60.0/
-  SdsModuleConfigurations.MK4I_L2.getDriveReduction()*
-  SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
+  public static final double maxVelocityMetersPerSecond = 5880.0/60.0 *
+  SdsModuleConfigurations.MK4I_L1.getDriveReduction()*
+  SdsModuleConfigurations.MK4I_L1.getWheelDiameter() * Math.PI;
 
   public static final double maxAngularVelocityRadiansPerSecond = maxVelocityMetersPerSecond /
   Math.hypot(Drivetrain_Trackwidth_meters/2.0,Drivetrain_Wheelbase_meters / 2.0 );
+
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     // front left
@@ -48,7 +53,9 @@ public class DriveTrain extends SubsystemBase {
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
 
-  private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+  private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(m_kinematics, Rotation2d.fromDegrees(m_pigeon.getFusedHeading()));
+
+  private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
   /** Creates a new DriveTrain. */
   public DriveTrain() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -57,7 +64,7 @@ public class DriveTrain extends SubsystemBase {
     m_frontLeftModule = Mk4iSwerveModuleHelper.createNeo(tab.getLayout("Front Left Module", BuiltInLayouts.kList)
     .withSize(2, 4)
     .withPosition(0, 0),
-    Mk4iSwerveModuleHelper.GearRatio.L2,
+    Mk4iSwerveModuleHelper.GearRatio.L1,
      FrontLeftModuleDriveMotor,
      FrontLeftModuleSteerMotor,
      FrontLeftModuleSteerEncoder,
@@ -68,7 +75,7 @@ public class DriveTrain extends SubsystemBase {
      m_frontRightModule = Mk4iSwerveModuleHelper.createNeo(tab.getLayout("Front Right Module", BuiltInLayouts.kList)
     .withSize(2, 4)
     .withPosition(2, 0),
-    Mk4iSwerveModuleHelper.GearRatio.L2,
+    Mk4iSwerveModuleHelper.GearRatio.L1,
      FrontRightModuleDriveMotor,
      FrontRightModuleSteerMotor,
      FrontRightModuleSteerEncoder,
@@ -79,7 +86,7 @@ public class DriveTrain extends SubsystemBase {
      m_backLeftModule = Mk4iSwerveModuleHelper.createNeo(tab.getLayout("Back Left Module", BuiltInLayouts.kList)
     .withSize(2, 4)
     .withPosition(4, 0),
-    Mk4iSwerveModuleHelper.GearRatio.L2,
+    Mk4iSwerveModuleHelper.GearRatio.L1,
      BackLeftModuleDriveMotor,
      BackLeftModuleSteerMotor,
      BackLeftModuleSteerEncoder,
@@ -90,13 +97,15 @@ public class DriveTrain extends SubsystemBase {
      m_backRightModule = Mk4iSwerveModuleHelper.createNeo(tab.getLayout("Back Right Module", BuiltInLayouts.kList)
     .withSize(2, 4)
     .withPosition(6, 0),
-    Mk4iSwerveModuleHelper.GearRatio.L2,
+    Mk4iSwerveModuleHelper.GearRatio.L1,
      BackRightModuleDriveMotor,
      BackRightModuleSteerMotor,
      BackRightModuleSteerEncoder,
      BackRightModuleSteerOffset
      );
+
   }
+
   public void zeroGyroscope() {
     m_pigeon.setFusedHeading(0.0);
   }

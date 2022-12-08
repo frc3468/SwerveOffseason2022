@@ -26,11 +26,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_drivetrain.setDefaultCommand(new drive(m_drivetrain,m_controller
-      //()-> -modifyAxis(m_controller.getY(GenericHID.Hand.kLeft)),
-      //()-> -modifyAxis(m_controller.getX(GenericHID.Hand.kLeft)),
-      //()-> -modifyAxis(m_controller.getX(GenericHID.Hand.kRight))
-    ));
+    m_drivetrain.setDefaultCommand(new drive(m_drivetrain, ()-> m_controller.getLeftX(), ()-> m_controller.getLeftY(), ()-> m_controller.getRightX()));
 
     // Configure the button bindings
     configureButtonBindings();

@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
@@ -36,11 +35,11 @@ public class drive extends CommandBase {
 
     return value;
   }
-    public drive(DriveTrain drivetrainsubsytem, XboxController mController)//aDoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
+    public drive(DriveTrain drivetrainsubsytem,DoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier)
     {
-    m_translationXSupplier = ()-> -modifyAxis(mController.getLeftX());
-    m_translationYSupplier =  ()-> -modifyAxis(mController.getLeftY());
-    m_rotationSupplier = ()-> -modifyAxis(mController.getRightX());
+    m_translationXSupplier = translationXSupplier;
+    m_translationYSupplier =  translationYSupplier;
+    m_rotationSupplier = rotationSupplier;
     this.m_drivetrainSubsystem = drivetrainsubsytem;
     //this.m_translationXSupplier = translationXSupplier;
     //this.m_translationYSupplier = translationYSupplier;
@@ -55,9 +54,9 @@ public class drive extends CommandBase {
     public void execute() {
       m_drivetrainSubsystem.drive(
         ChassisSpeeds.fromFieldRelativeSpeeds(
-          m_translationXSupplier.getAsDouble(), 
-          m_translationYSupplier.getAsDouble(), 
-          m_rotationSupplier.getAsDouble(), 
+          modifyAxis(m_translationXSupplier.getAsDouble()), 
+          modifyAxis(m_translationYSupplier.getAsDouble()), 
+          modifyAxis(m_rotationSupplier.getAsDouble()), 
           m_drivetrainSubsystem.getGyroscopeRotation()
         )
       );

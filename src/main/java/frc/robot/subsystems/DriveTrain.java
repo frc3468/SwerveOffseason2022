@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -52,8 +51,6 @@ public class DriveTrain extends SubsystemBase {
   private final SwerveModule m_frontRightModule;
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
-
-  private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(m_kinematics, Rotation2d.fromDegrees(m_pigeon.getFusedHeading()));
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
   /** Creates a new DriveTrain. */

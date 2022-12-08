@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
@@ -16,12 +15,32 @@ public class drive extends CommandBase {
   private  DoubleSupplier m_translationXSupplier;
   private  DoubleSupplier m_translationYSupplier;
   private  DoubleSupplier m_rotationSupplier;
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
 
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.05);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
+  }
     public drive(DriveTrain drivetrainsubsytem, XboxController mController)//aDoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
     {
-    double translationXSupplier = -modifyAxis(mController.getY(GenericHID.Hand.kLeft)) *drivetrainsubsytem.maxVelocityMetersPerSecond;
-    double translationYSupplier = -modifyAxis(mController.getX(GenericHID.Hand.kLeft));
-    double rotationSupplier = -modifyAxis(mController.getX(GenericHID.Hand.kRight));
+    m_translationXSupplier = ()-> -modifyAxis(mController.getLeftX());
+    m_translationYSupplier =  ()-> -modifyAxis(mController.getLeftY());
+    m_rotationSupplier = ()-> -modifyAxis(mController.getRightX());
     this.m_drivetrainSubsystem = drivetrainsubsytem;
     //this.m_translationXSupplier = translationXSupplier;
     //this.m_translationYSupplier = translationYSupplier;
@@ -30,6 +49,7 @@ public class drive extends CommandBase {
     addRequirements(drivetrainsubsytem);
 
     }
+    
 
     @Override
     public void execute() {

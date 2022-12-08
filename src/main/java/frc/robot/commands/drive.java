@@ -17,8 +17,8 @@ public class drive extends CommandBase {
   private  DoubleSupplier m_translationYSupplier;
   private  DoubleSupplier m_rotationSupplier;
 
-    public drive(DriveTrain drivetrainsubsytem, XboxController mController//aDoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
-    ) {
+    public drive(DriveTrain drivetrainsubsytem, XboxController mController)//aDoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier, DoubleSupplier rotationSupplier
+    {
     double translationXSupplier = -modifyAxis(mController.getY(GenericHID.Hand.kLeft)) *drivetrainsubsytem.maxVelocityMetersPerSecond;
     double translationYSupplier = -modifyAxis(mController.getX(GenericHID.Hand.kLeft));
     double rotationSupplier = -modifyAxis(mController.getX(GenericHID.Hand.kRight));
